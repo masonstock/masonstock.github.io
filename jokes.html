@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joke Generator Web App</title>
+    <style>
+      @font-face {
+        font-family: "Gidole";
+        src: url("/public/fonts/Gidole-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        margin: 0;
+
+        --darkest: #0d1b2a;
+        --dark: #1b263b;
+        --blue: #415a77;
+        --light_blue: #778da9;
+        --light: #e0e1dd;
+
+        font-family: "Gidole", sans-serif;
+        background-color: var(--dark);
+      }
+
+      main {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: var(--light);
+        padding: 50px 50px;
+        box-sizing: border-box;
+      }
+
+      .navigation_container {
+        max-width: 500px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--darkest);
+        border: 1px solid var(--light);
+        padding: 15px 25px;
+        box-sizing: border-box;
+        gap: 5px;
+      }
+
+      .nav_link {
+        text-align: center;
+        color: var(--light);
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .nav_link:hover {
+        text-decoration: underline;
+      }
+
+      .joke_container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid var(--light);
+        background-color: var(--darkest);
+        padding: 25px;
+        box-sizing: border-box;
+      }
+
+      button {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="navigation_container">
+        <a href="/index.html" class="nav_link">Home</a>
+        <a href="jokes.html" class="nav_link" style="text-decoration: underline"
+          >Joke Generator App</a
+        >
+        <a href="/resume.html" class="nav_link">Resume</a>
+      </div>
+      <h1 style="margin: 75px 0px 25px">Joke Generator</h1>
+      <div class="joke_container">
+        <div>
+          <p id="joke"></p>
+          <p id="setup"></p>
+          <p id="delivery"></p>
+        </div>
+        <button id="joke_button">Generate Joke</button>
+      </div>
+    </main>
+    <script>
+      // Retrieve references to HTML elements by their respective IDs
+      const jokeButton = document.getElementById("joke_button");
+      const joke = document.getElementById("joke");
+      const setup = document.getElementById("setup");
+      const delivery = document.getElementById("delivery");
+
+      async function getJoke() {
+        // Reset the text content of joke-related elements to prepare for new data
+        setup.innerText = "";
+        delivery.innerText = "";
+        joke.innerText = "Loading...";
+
+        // Fetch joke
+        const res = await fetch("https://v2.jokeapi.dev/joke/Any?safe-mode");
+        const data = await res.json();
+
+        // Check if the API response contains valid joke data
+        if (data) {
+          if (data.joke) {
+            joke.innerText = data.joke;
+          }
+          if (data.setup) {
+            joke.innerText = "";
+            setup.innerText = data.setup;
+            delivery.innerText = data.delivery;
+          }
+        } else {
+          // Display an error message in case the data is undefined or invalid
+          joke.innerText = "Error";
+        }
+      }
+
+      // Attach a click event listener to the joke button to trigger getJoke function
+      jokeButton.addEventListener("click", getJoke);
+    </script>
+  </body>
+</html>
